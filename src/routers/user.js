@@ -23,7 +23,7 @@ router.post("/users", async (req, res) => {
 
         res.status(201).send({user: user, token: token});
     } catch (error) {
-        res.status(500).send(error.message);
+        res.status(400).send(error.message);
     }
 });
 
@@ -34,7 +34,6 @@ router.post('/users/login', async (req, res) => {
 
         // Generate a JWT token, saves to user document and send it to response.
         const token = await user.generateToken();
-
         res.status(200).send({user: user, token: token});
     } catch(error) {
         res.status(400).send(error.message);

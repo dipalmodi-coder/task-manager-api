@@ -95,7 +95,6 @@ userSchema.methods.generateToken = async function () {
     const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: '7 days' });
     user.tokens = user.tokens.concat({ token: token });
     await user.save();
-
     return token;
 }
 
@@ -111,12 +110,9 @@ userSchema.statics.findByCredentials = async (email, password) => {
         throw new Error('Unable to login')
     }
 
-    console.log("text", password);
-    console.log("hash", user.password);
-
     const isMatch = await bcrypt.compare(password, user.password)
-    console.log("isMatch", isMatch);
-
+    
+    // bcrypt.compare is not working for password comparison
     if (isMatch) {
         throw new Error('Unable to login')
     }
@@ -129,7 +125,6 @@ userSchema.pre('save', async function (next) {
     const user = this;
 
     if (user.isModified('password')) {
-        console.log(user.password);
         user.password = await bcrypt.hash(user.password, saltRound);
     }
 
